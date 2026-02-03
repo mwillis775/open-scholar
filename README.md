@@ -6,7 +6,7 @@ Open Scholar is a peer-to-peer academic publishing and knowledge sharing platfor
 
 ## ✨ Features
 
-- **Decentralized Storage** - Files are distributed across the GrabNet P2P network
+- **Decentralized Storage** - Files are distributed across the [GrabNet](https://github.com/mwillis775/grab) P2P network
 - **User Accounts** - Registration with automatic ed25519 identity generation
 - **File Management** - Upload any file type with automatic hashing and pinning
 - **Peer Review System** - Community-driven quality assurance with ratings
