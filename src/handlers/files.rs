@@ -91,6 +91,7 @@ pub async fn upload(
         description: None,
         tags: None,
         is_public: true,
+        work_type: None,
     };
     
     // Process multipart fields
@@ -186,6 +187,9 @@ pub async fn upload(
     };
     
     // Create database record
+    // Parse work_type before moving metadata fields
+    let work_type = metadata.parsed_work_type();
+    
     let new_file = NewFile {
         uuid: uuid.clone(),
         user_id: user.id,
@@ -197,6 +201,7 @@ pub async fn upload(
         title: metadata.title,
         description: metadata.description,
         is_public: metadata.is_public,
+        work_type,
         grabnet_cid,
     };
     
@@ -217,6 +222,8 @@ pub async fn upload(
                         "filename": file.filename,
                         "content_type": file.content_type,
                         "size": file.size,
+                        "work_type": file.work_type,
+                        "review_criteria": file.review_criteria(),
                         "local_url": local_url,
                         "grabnet_url": grabnet_url,
                         "grabnet_cid": file.grabnet_cid,

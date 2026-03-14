@@ -1352,6 +1352,7 @@ dependencies = [
 [[package]]
 name = "grabnet"
 version = "0.1.0"
+source = "git+https://github.com/mwillis775/grab.git?branch=main#ef638a6883e2f10c179cbec0ee8aa7dff355f53e"
 dependencies = [
  "anyhow",
  "async-trait",

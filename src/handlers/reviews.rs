@@ -185,6 +185,7 @@ pub async fn create_review(
         clarity_score: req.clarity_score,
         reproducibility_score: req.reproducibility_score,
         significance_score: req.significance_score,
+        criteria_scores: req.criteria_scores.clone(),
     };
     
     match state.db.create_review(new_review) {

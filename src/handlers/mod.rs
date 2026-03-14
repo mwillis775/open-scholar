@@ -37,6 +37,10 @@ pub fn api_routes() -> Router<Arc<AppState>> {
         // GrabNet status
         .route("/grabnet", get(grabnet_status))
         
+        // Work types (protocol-level types with review criteria)
+        .route("/work-types", get(get_work_types))
+        .route("/work-types/:work_type", get(get_work_type_info))
+        
         // Authentication
         .route("/auth/register", post(auth::register))
         .route("/auth/login", post(auth::login))
@@ -167,6 +171,51 @@ async fn grabnet_status(State(state): State<Arc<AppState>>) -> Json<serde_json::
                     }
                 }
             }))
+        }
+    }
+}
+
+/// Get all work types with their review criteria
+async fn get_work_types() -> Json<serde_json::Value> {
+    use crate::models::{WorkType, WorkTypeInfo};
+    
+    let work_types: Vec<WorkTypeInfo> = WorkType::all()
+        .iter()
+        .map(|wt| WorkTypeInfo::from(*wt))
+        .collect();
+    
+    Json(json!({
+        "work_types": work_types,
+        "description": "Work types define the nature of scholarly work and set review expectations. These are NOT categories of worth - all types are equally valid. They establish what KIND of contribution is being made and how it should be evaluated."
+    }))
+}
+
+/// Get info for a specific work type
+async fn get_work_type_info(
+    axum::extract::Path(work_type): axum::extract::Path<String>,
+) -> axum::response::Response {
+    use crate::models::{WorkType, WorkTypeInfo};
+    use axum::http::StatusCode;
+    use axum::response::IntoResponse;
+    
+    match WorkType::from_str(&work_type) {
+        Some(wt) => {
+            let info = WorkTypeInfo::from(wt);
+            Json(json!(info)).into_response()
+        }
+        None => {
+            let valid_types: Vec<&str> = WorkType::all()
+                .iter()
+                .map(|wt| wt.as_str())
+                .collect();
+            
+            (
+                StatusCode::NOT_FOUND,
+                Json(json!({
+                    "error": format!("Unknown work type: {}", work_type),
+                    "valid_types": valid_types
+                }))
+            ).into_response()
         }
     }
 }
